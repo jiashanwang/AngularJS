@@ -7,13 +7,16 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, ">
-    <script src="js/angular.min.js"></script>
-    <script src="js/angular-ui-router.min.js"></script>
+    <script src="../lib/angular.min.js"></script>
+    <script src="../lib/angular-ui-router.min.js"></script>
+
     <title>$emit $on $broadcast</title>
 
 </head>
 
 <body ng-app="App">
+    <h2>$emit $on $broadcast</h2>
+    <h3>不同控制器以及指令间的数据传递 --》 通过发射（$emit） , 广播（$broadcast） ,接收（$on）的方式进行数据的传递</h3>
     <div ng-controller="ParentCtrl">
         <!--父级-->
         <div ng-controller="SelfCtrl">
@@ -27,36 +30,46 @@
     </div>
 </body>
 <script>
+    //$emit只能向parent controller传递event与data
+    // $broadcast只能向child controller传递event与data
+    // $on用于接收event与data
     var app = angular.module("App", [])
-    app.controller("SelfCtrl", function ($scope) {
-        $scope.click = function (){
-            // $scope.$broadcast("to-child","child")
-            $scope.$emit("toparent","parent")
+    // 控制器 SelfCtrl 首次进行发射
+    app.controller("SelfCtrl", function ($rootScope,$scope) {
+        $scope.click = function () {
+            // 从自己开始，向下广播 to-child 为事件名，"child" 为广播的信息（数据）
+            $scope.$broadcast("to-child", "child")
+            // 从自己开始，向上发射s
+            $scope.$emit("to-parent", "parent")
         }
+    });
+
+    // 父控制器 ParentCtrl 进行事件的接收以及信息的获取
+    app.controller("ParentCtrl", function ($scope) {
+        // 接收to-parent 事件，通过回调函数对数据进行处理（event事件对象，data(接收到的具体数据)）
+        $scope.$on("to-parent", function (event,data){   //event，事件参数不能省略
+            // console.log(event);
+            console.log(data);
+            // 从自己再次向下广播
+            $scope.$broadcast("to-haha", data)
+        });
+        
     })
-    app.controller("ParentCtrl",function ($scope){
-        $scope.$on("toparent",data)
-        $scope.$braodcast("tochild",data)
-        // $scope.$on("to-parent",function (data){   //event，事件参数不能省略
-        //     // console.log(event)  
-        //     console.log("ParentCtrl",data)
-        // })
-        // $scope.$on("to-child",function (event,data){
-        //     // console.log(event)
-        // })
-    
-    })
-    // 平级接收不到 发射或广播的数据
-    app.controller("BroCtrl",function (){
-        $scope.$on("tochild",function (event,data){
-            console.log("BroCtrl22"+data);
+    // 平级接收不到发射或广播的数据（但是父级发送的数据都是可以收到的）
+    app.controller("BroCtrl", function ($scope)  {
+        $scope.$on("to-haha", function (event, data) {
+            console.log(data);
         })
-        // $scope.$on("to-parent",function (event,data){
-        //     // console.log("BroCtrl33"+data);
-        // })
-    })
-    
-    // app.controller("ChildCtrl",)
+    });   
+
+    // 子集对事件和数据进行接收
+    app.controller("ChildCtrl", function ($scope) {
+        $scope.$on("to-haha", function (event, data) {
+            console.log(data);
+        })
+    });
+
+
 </script>
 
 </html>
