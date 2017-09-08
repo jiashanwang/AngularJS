@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zn-cn">
+
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, ">
+    <script src="../lib/angular.min.js"></script>
+    <script src="../lib/angular-ui-router.min.js"></script>
+    <title>Angular 隔离作用域</title>
+
+</head>
+
+<body ng-app="myApp">
+
+    <!--“@”是通过 DOM 的属性来跟mytest控制器进行数据绑定-->
+    <!-- <div ng-controller="mytest">
+        <test attr1="{{name}}" attr2 ="{{age}}"></test>
+    </div> -->
+
+    <!--“=”有双重绑定的功能,比如mytest控制器与test子指令进行双重绑定(单个字符串、对象都是有效的)下面代码用对象来演示-->
+    <!-- <div ng-controller="mytest">
+        <test></test>
+    </div> -->
+
+    <!--“&”的意思是子指令能调用父控制器的方法,这里的指令template元素点击调用控制器的getName方法-->
+    <div ng-controller="mytest">
+        <test></test>
+    </div>
+</body>
+<script src="js/directive/double_data_binding.js"></script>
+
+</html>

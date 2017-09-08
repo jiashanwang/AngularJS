@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zn-cn">
+
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, ">
+    <script src="js/angular.min.js"></script>
+    <script src="js/angular-ui-router.min.js"></script>
+    <title>$emit $on $broadcast</title>
+
+</head>
+
+<body ng-app="App">
+    <div ng-controller="ParentCtrl">
+        <!--父级-->
+        <div ng-controller="SelfCtrl">
+            <!--自己-->
+            <a ng-click="click()">click me</a>
+            <div ng-controller="ChildCtrl"></div>
+            <!--子级-->
+        </div>
+        <div ng-controller="BroCtrl"></div>
+        <!--平级-->
+    </div>
+</body>
+<script>
+    var app = angular.module("App", [])
+    app.controller("SelfCtrl", function ($scope) {
+        $scope.click = function (){
+            // $scope.$broadcast("to-child","child")
+            $scope.$emit("toparent","parent")
+        }
+    })
+    app.controller("ParentCtrl",function ($scope){
+        $scope.$on("toparent",data)
+        $scope.$braodcast("tochild",data)
+        // $scope.$on("to-parent",function (data){   //event，事件参数不能省略
+        //     // console.log(event)  
+        //     console.log("ParentCtrl",data)
+        // })
+        // $scope.$on("to-child",function (event,data){
+        //     // console.log(event)
+        // })
+    
+    })
+    // 平级接收不到 发射或广播的数据
+    app.controller("BroCtrl",function (){
+        $scope.$on("tochild",function (event,data){
+            console.log("BroCtrl22"+data);
+        })
+        // $scope.$on("to-parent",function (event,data){
+        //     // console.log("BroCtrl33"+data);
+        // })
+    })
+    
+    // app.controller("ChildCtrl",)
+</script>
+
+</html>
